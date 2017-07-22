@@ -2,9 +2,12 @@ from flask import Flask, request, redirect, abort
 from flask import send_file
 import ts3
 
+users = {
+	'lantrix': ['VZDUWHRwVQlaAnLc+oum0TnnGR0=', 'wy5YOXZYwc6dpWEr+TdU1Frs4xU=', 'ykR5DGyS9C2ICKrr8MfB5xBVDdg='],
+	'ginger': ['uvh9fIQruJDpgScU7zxhmW6biy8=']
+}
 
 app = Flask(__name__)
-ts = ts3.query.TS3Connection("127.0.0.1")
 
 @app.route("/")
 def hello():
@@ -16,30 +19,35 @@ def hello():
 			"<input type=\"password\" name=\"password\" size=\"40\"><br>"
 			"<input type=\"submit\" name=\"action\" value=\"Kick\" size=\"40\">"
 			"<input type=\"submit\" name=\"action\" value=\"Ban\" size=\"40\"><br>"
+			"<input type=\"radio\" name=\"target\" value=\"lantrix\" checked> Lantrix<br>"
+			"<input type=\"radio\" name=\"target\" value=\"ginger\"> Ginger<br>"
 			"</form>")
 
 
 @app.route("/bantrix", methods=['POST'])
 def ts3memes():
 	if request.method == "POST":
-		print(request.form['username'])
+		ts = ts3.query.TS3Connection("127.0.0.1")
 		try:
 			ts.login(client_login_name=request.form['username'], client_login_password=request.form['password'])
 			ts.use(sid=1)
 			ts.clientupdate(client_nickname='Roboi')
 		except ts3.query.TS3QueryError as err:
-			print("login failed", err['msg'])
+			print("login failed", err)
 			return('failed to login')
+		except AttribueError as err:
+			print('attrerr', err)
+			return(err)
 	
-		for i in ['VZDUWHRwVQlaAnLc+oum0TnnGR0=', 'wy5YOXZYwc6dpWEr+TdU1Frs4xU=', 'ykR5DGyS9C2ICKrr8MfB5xBVDdg=']:
+		for i in users[request.form['target']]:
 			try:
-				target=ts.clientgetids(cluid=i).parsed
+				lantrix=ts.clientgetids(cluid=i).parsed
 				if request.form['action'] == 'Ban':
-					for user in target:
+					for user in lantrix:
 						ts.banclient(clid=user['clid'], time=1, banreason="Everyone hates you not just me")
 						return ("BANNED!")
 				elif request.form['action'] == 'Kick':
-					for user in target:
+					for user in lantrix:
 						ts.clientkick(reasonid=4, reasonmsg="Everyone hates you not just me", clid=user['clid'])
 					return ("KICKED!")
 			except ts3.query.TS3QueryError as err:
