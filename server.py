@@ -4,7 +4,8 @@ import ts3
 
 users = {
 	'lantrix': ['VZDUWHRwVQlaAnLc+oum0TnnGR0=', 'wy5YOXZYwc6dpWEr+TdU1Frs4xU=', 'ykR5DGyS9C2ICKrr8MfB5xBVDdg='],
-	'ginger': ['uvh9fIQruJDpgScU7zxhmW6biy8=']
+	'ginger': ['uvh9fIQruJDpgScU7zxhmW6biy8='],
+	'both': ['uvh9fIQruJDpgScU7zxhmW6biy8=', 'VZDUWHRwVQlaAnLc+oum0TnnGR0=', 'wy5YOXZYwc6dpWEr+TdU1Frs4xU=', 'ykR5DGyS9C2ICKrr8MfB5xBVDdg=']
 }
 
 app = Flask(__name__)
@@ -21,6 +22,7 @@ def hello():
 			"<input type=\"submit\" name=\"action\" value=\"Ban\" size=\"40\"><br>"
 			"<input type=\"radio\" name=\"target\" value=\"lantrix\" checked> Lantrix<br>"
 			"<input type=\"radio\" name=\"target\" value=\"ginger\"> Ginger<br>"
+			"<input type=\"radio\" name=\"target\" value=\"both\"> Both<br>"
 			"</form>")
 
 
@@ -45,13 +47,13 @@ def ts3memes():
 				if request.form['action'] == 'Ban':
 					for user in lantrix:
 						ts.banclient(clid=user['clid'], time=1, banreason="Everyone hates you not just me")
-						return ("BANNED!")
+					return ("BANNED!")
 				elif request.form['action'] == 'Kick':
 					for user in lantrix:
 						ts.clientkick(reasonid=4, reasonmsg="Everyone hates you not just me", clid=user['clid'])
 					return ("KICKED!")
 			except ts3.query.TS3QueryError as err:
-				print('i guess it worked')
+				print('Unreturned statement')
 		return("somehow we fucked up or he's offline")
 
 	
